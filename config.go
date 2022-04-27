@@ -65,7 +65,13 @@ type Rule struct {
 func (r *Rule) aliasFor(path string) (string, error) {
 	groups := r.Regexp.FindAllString(path, -1)
 	if len(groups) > 0 {
-		tmpl, err := template.New("test").Parse(r.Alias)
+
+		funcMap := template.FuncMap{
+			"Title": func(s string) string {
+				return strings.ToTitle(strings.ToLower(s))
+			},
+		}
+		tmpl, err := template.New("test").Funcs(funcMap).Parse(r.Alias)
 		if err != nil {
 			return "", err
 		}

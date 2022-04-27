@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/julz/importas"
+	"github.com/IAmRadek/importas"
 	"golang.org/x/tools/go/analysis/singlechecker"
 )
 
