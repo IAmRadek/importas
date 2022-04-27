@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
+	"text/template"
 )
 
 type Config struct {
@@ -61,9 +63,17 @@ type Rule struct {
 }
 
 func (r *Rule) aliasFor(path string) (string, error) {
-	str := r.Regexp.FindString(path)
-	if len(str) > 0 {
-		return r.Regexp.ReplaceAllString(str, r.Alias), nil
+	groups := r.Regexp.FindAllString(path, -1)
+	if len(groups) > 0 {
+		tmpl, err := template.New("test").Parse(r.Alias)
+		if err != nil {
+			return "", err
+		}
+
+		alias := &strings.Builder{}
+		err = tmpl.Execute(alias, groups)
+
+		return alias.String(), err
 	}
 
 	return "", errors.New("mismatch rule")
